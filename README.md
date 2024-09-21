@@ -24,5 +24,4 @@ https://www.notion.so/teamsparta/TEAM-SSC-4a530d9c439e433a910786d7c81acc34
 [유투브 시연 영상](https://www.youtube.com/watch?v=x09rmBeJB9k&t=1s)
 
 ## ⚡️ 배포 서비스 주소
-
 [서비스 주소](https://team-ssc.vercel.app/)

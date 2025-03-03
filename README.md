@@ -37,7 +37,7 @@
   - `localhost`를 사용하여 RabbitMQ에 접근하려 했으나 컨테이너 간 네트워크 격리로 인해 실패
 - **해결책**:
   - **Docker Compose**를 사용하여 **Spring 서버와 RabbitMQ를 동일 네트워크에 배치**
-  - `rabbitmq` 컨테이너의 **고정 네트워크 이름을 사용하여 통신** (e.g., `rabbitmq`)
+  - `rabbitmq` 컨테이너의 **고정 네트워크 이름을 사용하여 통신** (`rabbitmq`)
 
 ### 2️⃣ 채팅 성능 최적화
 - **문제점 1**: 높은 동시 접속 시 성능 저하
@@ -47,7 +47,7 @@
   - **원인 분석**: 스레드 개수가 무제한으로 증가하여 서버 리소스 소모
   - **해결책**: **스레드 풀(Thread Pool) 적용**하여 최적화
 
-📚 관련 문서: [WebSocket 성능 비교 및 최적화](https://github.com/dami0806/TeamSSC/wiki/WebSocket-vs-HTTP-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90)
+📚 관련 문서: [WebSocket 성능 비교 및 최적화](https://github.com/dami0806/TeamSSC/wiki/WebSocket-vs-HTTP-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90-%EB%B0%8F-%ED%85%8C%EC%8A%A4%ED%8A%B8#jmeter-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%84%A4%EC%A0%95)
 
 ### 3️⃣ 메시지 브로커 안정성 개선
 - **문제점**: 메시지 소비 실패 시 **DLQ(Dead Letter Queue)로 메시지가 이동**, 지속적인 누적 발생
@@ -58,7 +58,7 @@
   - **서킷 브레이커 적용** 으로 일시적인 장애 시 점진적 복구 시도
   - **Slack 알림 시스템 연동**하여 개발자가 실시간으로 장애를 인지하고 조치 가능
 
-📚 관련 문서: [RabbitMQ DLQ 및 서킷 브레이커 전략](https://github.com/dami0806/TeamSSC/wiki/Dead-Letter-Queue(DLQ)-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%B2%98%EB%A6%AC-%EC%A0%84%EB%9E%B5)
+📚 관련 문서: [RabbitMQ DLQ 및 서킷 브레이커 전략](https://github.com/dami0806/TeamSSC/wiki/3%E2%80%905-Dead-Letter-Queue%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%B2%98%EB%A6%AC-%EC%A0%84%EB%9E%B5#dead-letter-queue-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%B2%98%EB%A6%AC-%EC%A0%84%EB%9E%B5)
 
 ### 4️⃣ 배포 환경에서의 WebSocket 통신 문제 해결
 - **문제점**: WebSocket 연결이 배포 환경에서 실패

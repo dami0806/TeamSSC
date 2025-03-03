@@ -81,4 +81,10 @@
   - **Spring Security와 JWT 필터 체인 적용**하여 인증 및 인가 로직 개선
  
 
+### 📌 **ERD**  
+
+![teamssc](https://github.com/user-attachments/assets/34f1fd66-2d93-4efb-9813-7e367ff4c5c1)
+
+
 ### 🎥 **시연 영상**: [유튜브 링크](https://www.youtube.com/watch?v=x09rmBeJB9k)
+

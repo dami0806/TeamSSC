@@ -48,7 +48,7 @@
 <p align="left">
     <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" style="margin-right: 2px;">
     <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" style="margin-right: 2px;">
-    <img src="https://img.shields.io/badge/Grafana%20Loki-FF9900?style=flat-square&logo=grafana&logoColor=white">
+    <img src="https://img.shields.io/badge/Slack-FF9900?style=flat-square&logo=slack&logoColor=white">
 </p>
 
 ### 문서  

@@ -105,7 +105,7 @@
   - `localhost`를 사용하여 RabbitMQ에 접근하려 했으나 컨테이너 간 네트워크 격리로 인해 실패
 - **해결책**:
   - **Docker Compose**를 사용하여 **Spring 서버와 RabbitMQ를 동일 네트워크에 배치**
-  - `rabbitmq` 컨테이너의 **고정 네트워크 이름을 사용하여 통신** (`rabbitmq`)
+  - `rabbitmq` 컨테이너의 **고정 네트워크 이름으로 통신**
 
 ### 2️⃣ 채팅 성능 최적화
 - **문제점 1**: 높은 동시 접속 시 성능 저하
@@ -113,7 +113,7 @@
   - **해결책**: 멀티스레드 적용하여 동시 요청 처리 최적화
 - **문제점 2**: 과도한 스레드 생성으로 인한 리소스 낭비
   - **원인 분석**: 스레드 개수가 무제한으로 증가하여 서버 리소스 소모
-  - **해결책**: **스레드 풀(Thread Pool) 적용**하여 최적화
+  - **해결책**: **스레드 풀(Thread Pool) 적용** 해서 최적화
 
 📚 관련 문서: [WebSocket 성능 비교 및 최적화](https://github.com/dami0806/TeamSSC/wiki/WebSocket-vs-HTTP-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90-%EB%B0%8F-%ED%85%8C%EC%8A%A4%ED%8A%B8#jmeter-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%84%A4%EC%A0%95)
 

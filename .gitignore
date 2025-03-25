@@ -47,3 +47,7 @@ src/main/.DS_Store
 src/main/resources/application.yml
 
 docker-compose.yml
+
+src/main/resources/grafana.ini
+
+src/main/resources/prometheus.yml

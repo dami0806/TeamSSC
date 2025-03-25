@@ -1,5 +1,6 @@
 package com.sparta.teamssc.domain.chat.service;
 
+import com.sparta.teamssc.domain.chat.config.WebSocketSessionManager;
 import com.sparta.teamssc.domain.chat.entity.Message;
 import com.sparta.teamssc.domain.chat.entity.RoomType;
 import com.sparta.teamssc.domain.chat.repository.MessageRepository;
@@ -8,6 +9,8 @@ import com.sparta.teamssc.domain.team.service.TeamService;
 import com.sparta.teamssc.domain.user.user.entity.User;
 import com.sparta.teamssc.domain.user.user.service.UserService;
 import com.sparta.teamssc.rabbitmq.RabbitMQConfig;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -35,42 +38,63 @@ public class MessageServiceImpl implements MessageService {
     private final UserService userService;
 
     private final RabbitTemplate rabbitTemplate;
-
+    private final SimpMessagingTemplate messagingTemplate;
+    private final WebSocketSessionManager webSocketSessionManager;
     private int reconnectAttempts = 0;
     private static final int MAX_RECONNECT_ATTEMPTS = 5;
+    private static final String CIRCUIT_BREAKER_NAME = "webSocketCircuitBreaker";
+    private static final String RETRY_NAME = "webSocketRetry";
 
     @Scheduled(fixedDelay = 1000) // 주기적으로 WebSocket 상태 확인
+    @CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "handleWebSocketFailure")
+    @Retry(name = RETRY_NAME)
     public void checkWebSocketConnection() {
-        if (!isWebSocketConnected() && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        if (!isWebSocketConnected()) {
             reconnect();
         }
     }
 
+    // websocket 연결 확인
     private boolean isWebSocketConnected() {
-        // WebSocket이 정상적으로 작동하는지 확인하는 로직 (Ping/Pong으로 체크 가능)
-        return true; // TODO: 실제 구현
+        boolean sessionActive = webSocketSessionManager.hasActiveSessions();
+
+        try {
+            messagingTemplate.convertAndSend("/topic/ping", "ping");
+            log.info("WebSocket 테스트 메시지 전송 성공");
+        } catch (Exception e) {
+            log.error("WebSocket 테스트 메시지 전송 실패: {}", e.getMessage());
+            sessionActive = false;
+        }
+
+        return sessionActive;
     }
+
 
     private void reconnect() {
         if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
             log.error("최대 WebSocket 재연결 횟수 초과. 사용자에게 새로고침 요청.");
-            alertUserToRefresh(); // 클라이언트에게 새로고침 요청
+            alertUserToRefresh();
             return;
         }
 
-        int delay = (int) Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // 지수 백오프 (최대 30초)
         reconnectAttempts++;
-
         log.info("WebSocket 재연결 시도... (시도 횟수: {})", reconnectAttempts);
-
-        try {
-            Thread.sleep(delay); // 일정 시간 대기 후 재연결 시도
-            connectWebSocket();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("WebSocket 재연결 중 오류 발생", e);
-        }
+        connectWebSocket();
     }
+
+//        int delay = (int) Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // 지수 백오프 (최대 30초)
+//        reconnectAttempts++;
+//
+//        log.info("WebSocket 재연결 시도... (시도 횟수: {})", reconnectAttempts);
+//
+//        try {
+//            Thread.sleep(delay); // 일정 시간 대기 후 재연결 시도
+//            connectWebSocket();
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//            log.error("WebSocket 재연결 중 오류 발생", e);
+//        }
+//    }
 
     private void connectWebSocket() {
         // TODO: 실제 WebSocket 재연결 로직 구현 필요

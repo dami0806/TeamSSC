@@ -17,6 +17,7 @@ public class MessageListener {
     private final MessageRepository messageRepository;
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
+    @CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "handleMessageFailure")
     public void handleMessage(Message message) {
         log.debug("받은 RabbitMQ 메시지: {}", message);
 

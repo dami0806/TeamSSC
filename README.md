@@ -1,1 +1,158 @@
-# TeamSSC
+# TreamSSC (Tream Study Student Care) 프로젝트
+![image](https://github.com/user-attachments/assets/448542c3-bab2-4ac1-b5f8-3624d10688ed)
+
+
+## 📌 프로젝트 개요
+
+- **프로젝트 기간**: 2024.07.17 ~ 2024.08.20
+- **프로젝트 설명**:
+  - Slack, Notion, Excel 등을 통한 복잡한 자료 제공 경로를 단순화하고, **공지 및 소통을 간편하게 관리하는 웹 애플리케이션** 개발
+  - 실시간 채팅 및 공지 시스템을 통해 사용자 간 원활한 소통을 지원
+
+## 백엔드  
+<div align=left>
+    <img src="https://img.shields.io/badge/JDK%2021-E38836?style=flat-square&logo=openJdk&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Spring%20Boot%203.4.2-6DB33F?style=flat-square&logo=springboot&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=flat-square&logo=spring&logoColor=white">
+</div>
+
+<div align=left>
+    <img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat-square&logo=springsecurity&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Spring%20Cloud-6DB33F?style=flat-square&logo=spring&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Spring%20Gateway-6DB33F?style=flat-square&logo=spring&logoColor=white">
+</div>
+
+<div align=left>
+    <img src="https://img.shields.io/badge/Eureka-6DB33F?style=flat-square&logo=spring&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=gradle&logoColor=white">
+</div>
+
+---
+
+### 데이터베이스  
+<div align=left>
+    <img src="https://img.shields.io/badge/MySQL%208-08668E?style=flat-square&logo=mysql&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Redis-FF0000?style=flat-square&logo=redis&logoColor=white">
+</div>
+
+
+### 테스트  
+<div align=left>
+    <img src="https://img.shields.io/badge/JUnit%205-25A162?style=flat-square&logo=junit5&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/JMeter-D22128?style=flat-square&logo=apachejmeter&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Jacoco-6DB33F?style=flat-square">
+</div>
+
+
+### 모니터링  
+<p align="left">
+    <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Slack-FF9900?style=flat-square&logo=slack&logoColor=white">
+</p>
+
+### 문서  
+<div align=left>
+    <img src="https://img.shields.io/badge/Swagger-85EA2D?style=flat-square&logo=swagger&logoColor=black">
+</div>
+
+
+### 인프라  
+<div align=left>
+    <img src="https://img.shields.io/badge/AWS%20EC2-FF9900?style=flat-square&logo=amazonec2&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/AWS%20RDS-527FFF?style=flat-square&logo=amazonrds&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/AWS%20ECR-FF9900?style=flat-square&logo=amazonaws&logoColor=white">
+</div>
+
+<div align=left>
+    <img src="https://img.shields.io/badge/AWS%20S3-44B8A1?style=flat-square&logo=amazonaws&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" style="margin-right: 2px;">
+    <img src="https://img.shields.io/badge/Docker%20Compose-2496ED?style=flat-square&logo=docker&logoColor=white">
+</div>
+
+
+## CI/CD  
+<p align="left">
+    <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white">
+</p>
+
+
+## 👥 팀 역할
+
+| 역할 | 이름 | 담당 기능 |
+|------|------|----------------|
+| 리더 | 함승완 | 회원관련 기능, 프론트엔드 세팅 |
+| 부리더 | 박다미 | 시큐리티 설정, 팀 프로젝트 관리, 채팅, 배포 |
+| 팀원 | 박강현 | 게시글, 공지사항, 배포, 프론트엔드 |
+| 팀원 | 김창민 | 트랙, 카카오 로그인 |
+| 팀원 | 김현민 | 기수, 회원가입 승인, 이메일 인증 |
+
+
+## 🚀 주요 기여
+
+- **WebSocket 기반 실시간 채팅 기능 구현**
+- **JWT 인증 및 사용자 관리 시스템 개발**
+- **RabbitMQ 비동기 메시징 처리 구현**
+- **Docker 및 AWS EC2를 활용한 배포 경험**
+- **Jira를 활용한 프로젝트 플래닝 및 GitHub 이슈 관리**
+
+## 🛠 트러블슈팅
+
+### 1️⃣ Docker 컨테이너 네트워크 문제 해결
+- **문제점**: Spring 서버와 RabbitMQ 간 통신 오류 발생
+- **원인 분석**:
+  - 초기 설정에서 각 컨테이너가 개별 네트워크에서 실행됨
+  - `localhost`를 사용하여 RabbitMQ에 접근하려 했으나 컨테이너 간 네트워크 격리로 인해 실패
+- **해결책**:
+  - **Docker Compose**를 사용하여 **Spring 서버와 RabbitMQ를 동일 네트워크에 배치**
+  - `rabbitmq` 컨테이너의 **고정 네트워크 이름으로 통신**
+
+### 2️⃣ 채팅 성능 최적화
+- **문제점 1**: 높은 동시 접속 시 성능 저하
+  - **원인 분석**: WebSocket 요청이 단일 스레드에서 처리되어 병목 발생
+  - **해결책**: 멀티스레드 적용하여 동시 요청 처리 최적화
+- **문제점 2**: 과도한 스레드 생성으로 인한 리소스 낭비
+  - **원인 분석**: 스레드 개수가 무제한으로 증가하여 서버 리소스 소모
+  - **해결책**: **스레드 풀(Thread Pool) 적용** 해서 최적화
+
+📚 관련 문서: [WebSocket 성능 비교 및 최적화](https://github.com/dami0806/TeamSSC/wiki/WebSocket-vs-HTTP-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90-%EB%B0%8F-%ED%85%8C%EC%8A%A4%ED%8A%B8#jmeter-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%84%A4%EC%A0%95)
+
+### 3️⃣ 메시지 브로커 안정성 개선
+- **문제점**: 메시지 소비 실패 시 **DLQ(Dead Letter Queue)로 메시지가 이동**, 지속적인 누적 발생
+- **원인 분석**:
+  - Consumer가 메시지 처리를 실패하면 메시지가 DLQ로 전송되면서 백로그가 쌓임
+  - 특정 Consumer가 지속적으로 실패할 경우 시스템의 메시지 처리 속도 저하
+- **해결책**:
+  - **서킷 브레이커 적용** 으로 일시적인 장애 시 점진적 복구 시도
+  - **Slack 알림 시스템 연동**하여 개발자가 실시간으로 장애를 인지하고 조치 가능
+
+📚 관련 문서: [RabbitMQ DLQ 및 서킷 브레이커 전략](https://github.com/dami0806/TeamSSC/wiki/3%E2%80%905-Dead-Letter-Queue%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%B2%98%EB%A6%AC-%EC%A0%84%EB%9E%B5#dead-letter-queue-%EB%A9%94%EC%8B%9C%EC%A7%80-%EC%B2%98%EB%A6%AC-%EC%A0%84%EB%9E%B5)
+
+### 4️⃣ 배포 환경에서의 WebSocket 통신 문제 해결
+- **문제점**: WebSocket 연결이 배포 환경에서 실패
+- **원인 분석**:
+  - 로컬 개발 환경에서는 `ws://localhost:8080`을 사용하여 정상 작동
+  - 배포 환경에서는 도메인을 사용하여 접근해야 하지만 설정이 미흡하여 WebSocket 연결 실패
+- **해결책**:
+  - **Nginx 리버스 프록시 설정**을 통해 WebSocket 요청을 올바르게 라우팅
+  - `nginx.conf`에서 WebSocket 업그레이드 헤더 설정 추가
+  - 클라이언트에서 `wss://{도메인}/chat`으로 접속하도록 수정
+
+### 5️⃣ JWT 인증 및 보안 강화
+- **문제점**: JWT 토큰이 만료되면 사용자 세션이 종료됨
+- **원인 분석**:
+  - JWT는 기본적으로 세션을 유지하지 않으므로, 토큰이 만료되면 재로그인이 필요
+  - 사용자 경험을 고려할 때, 자동 갱신 기능이 필요함
+- **해결책**:
+  - **Refresh Token 적용**하여 액세스 토큰 만료 시 자동 재발급
+  - **Redis를 활용한 세션 캐싱**으로 사용자 인증 요청 속도 개선
+  - **Spring Security와 JWT 필터 체인 적용**하여 인증 및 인가 로직 개선
+ 
+
+### 📌 **ERD**  
+
+![teamssc](https://github.com/user-attachments/assets/34f1fd66-2d93-4efb-9813-7e367ff4c5c1)
+
+
+### 🎥 **시연 영상**: [유튜브 링크](https://www.youtube.com/watch?v=x09rmBeJB9k)
+

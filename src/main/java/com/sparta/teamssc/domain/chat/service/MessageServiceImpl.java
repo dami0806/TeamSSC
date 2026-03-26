@@ -8,6 +8,7 @@ import com.sparta.teamssc.domain.team.service.TeamService;
 import com.sparta.teamssc.domain.user.user.entity.User;
 import com.sparta.teamssc.domain.user.user.service.UserService;
 import com.sparta.teamssc.rabbitmq.RabbitMQConfig;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,6 +25,8 @@ import java.util.List;
 @Slf4j
 public class MessageServiceImpl implements MessageService {
 
+    private static final String RABBITMQ_CB = "rabbitmq-consumer";
+
     private final MessageRepository messageRepository;
     private final TeamService teamService;
     private final PeriodService periodService;
@@ -31,6 +34,7 @@ public class MessageServiceImpl implements MessageService {
     private final RabbitTemplate rabbitTemplate;
 
     @Transactional
+    @CircuitBreaker(name = RABBITMQ_CB, fallbackMethod = "sendTeamMessageFallback")
     public void sendTeamMessage(Long teamId, String content) {
 
         User user = getCurrentUser();
@@ -46,14 +50,18 @@ public class MessageServiceImpl implements MessageService {
                 .roomType(RoomType.TEAM)
                 .build();
 
-
-        // 메시지를 RabbitMQ로 발행
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.QUEUE_NAME, message);
         log.info("팀Message 보내기 RabbitMQ: {}", message);
         log.info("메시지를 보낸 사람 이름: {}", user.getUsername());
     }
 
+    public void sendTeamMessageFallback(Long teamId, String content, Throwable t) {
+        log.error("RabbitMQ 장애로 팀 메시지 전송 실패 - teamId: {}, cause: {}", teamId, t.getMessage());
+        throw new IllegalStateException("현재 메시지 전송이 불가합니다. 잠시 후 다시 시도해주세요.");
+    }
+
     @Transactional
+    @CircuitBreaker(name = RABBITMQ_CB, fallbackMethod = "sendPeriodMessageFallback")
     public void sendPeriodMessage(Long periodId, String content) {
 
         User user = getCurrentUser();
@@ -69,12 +77,13 @@ public class MessageServiceImpl implements MessageService {
                 .roomType(RoomType.PERIOD)
                 .build();
 
-        // 메시지를 RabbitMQ로 발행
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.QUEUE_NAME, message);
-
-
         log.info("기수Message 보내기 RabbitMQ: {}", message);
+    }
 
+    public void sendPeriodMessageFallback(Long periodId, String content, Throwable t) {
+        log.error("RabbitMQ 장애로 기수 메시지 전송 실패 - periodId: {}, cause: {}", periodId, t.getMessage());
+        throw new IllegalStateException("현재 메시지 전송이 불가합니다. 잠시 후 다시 시도해주세요.");
     }
 
     // 팀 메시지을 불러오기

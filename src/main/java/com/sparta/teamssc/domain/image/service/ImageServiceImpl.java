@@ -21,7 +21,7 @@ public class ImageServiceImpl implements ImageService {
     private final AmazonS3 amazonS3;
     private final ImageRepository imageRepository;
 
-    @Value("${S3_BUCKETNAME}")
+    @Value("${S3_BUCKETNAME:dummy-bucket}")
     private String bucketName;
 
     // 파일을 S3에 업로드하고 파일 URL을 반환

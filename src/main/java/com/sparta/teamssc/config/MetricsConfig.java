@@ -18,10 +18,10 @@ public class MetricsConfig {
     }
 
     @Bean
-    public void monitorQueueSize(MeterRegistry meterRegistry) {
-        Gauge.builder("rabbitmq.queue.size", () -> {
+    public Gauge monitorQueueSize(MeterRegistry meterRegistry) {
+        return Gauge.builder("rabbitmq.queue.size", () -> {
             int queueSize = rabbitAdmin.getQueueProperties("chatQueue").size();
-            log.info("📊 RabbitMQ chatQueue 현재 크기: {}", queueSize);
+            log.info("RabbitMQ chatQueue 현재 크기: {}", queueSize);
             return queueSize;
         }).register(meterRegistry);
     }

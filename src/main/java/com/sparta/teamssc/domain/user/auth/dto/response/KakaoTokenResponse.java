@@ -1,2 +1,4 @@
-package com.sparta.teamssc.domain.user.auth.dto.response;public class KakaoTokenResponse {
+package com.sparta.teamssc.domain.user.auth.dto.response;
+
+public class KakaoTokenResponse {
 }

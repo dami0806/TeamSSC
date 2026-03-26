@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class S3Config {
-    @Value("${S3_ACCESS}")
+    @Value("${S3_ACCESS:dummy-access-key}")
     private String accessKey;
-    @Value("${S3_SECRET}")
+    @Value("${S3_SECRET:dummy-secret-key}")
     private String secretKey;
-    @Value("${S3_REGION}")
+    @Value("${S3_REGION:ap-northeast-2}")
     private String region;
 
     @Bean

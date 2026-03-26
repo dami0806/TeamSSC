@@ -92,7 +92,15 @@ resilience4j:
         waitDurationInOpenState: 10s  # 10초 후 재시도
         slidingWindowSize: 10  # 최근 10개 요청 기준으로 실패율 계산
 
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, metrics
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 slack:
   webhook:
     url: ${SLACK_WEBHOOK_URL}

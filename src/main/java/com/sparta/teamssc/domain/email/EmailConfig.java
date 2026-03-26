@@ -11,10 +11,10 @@ import java.util.Properties;
 @Configuration
 public class EmailConfig {
 
-    @Value("${EMAIL_USERNAME}")
+    @Value("${EMAIL_USERNAME:dummy@gmail.com}")
     private String username;
 
-    @Value("${EMAIL_PASSWORD}")
+    @Value("${EMAIL_PASSWORD:dummy-password}")
     private String password;
 
     @Bean

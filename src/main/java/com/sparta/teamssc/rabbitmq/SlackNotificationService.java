@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class SlackNotificationService {
 
-    @Value("${SLACK_WEBHOOK_URL}")
+    @Value("${SLACK_WEBHOOK_URL:}")
     private String slackWebhookUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();

@@ -124,5 +124,4 @@ public class JwtUtil {
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role)) // ROLE_ 접두사 추가
                 .collect(Collectors.toList());
     }
-
 }

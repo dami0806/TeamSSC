@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/teamssc?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    username: root
+    password: Ekalekal1@
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secret:
+    key: local-dev-jwt-secret-key-must-be-at-least-32-characters-long
+
+secret:
+  admin-key: local-admin-key
+
+# 로컬 더미값 (S3, Email, Slack 기능은 동작 안함)
+S3_ACCESS: dummy-access-key
+S3_SECRET: dummy-secret-key
+S3_REGION: ap-northeast-2
+
+EMAIL_USERNAME: dummy@gmail.com
+EMAIL_PASSWORD: dummy-password
+
+SLACK_WEBHOOK_URL:
+
+logging:
+  level:
+    org.springframework.messaging: INFO
+    org.springframework.amqp: INFO
+    org.springframework.web.socket: INFO
+    com.sparta.teamssc: DEBUG

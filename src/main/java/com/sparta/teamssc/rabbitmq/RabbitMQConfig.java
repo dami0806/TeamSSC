@@ -110,11 +110,31 @@ public class RabbitMQConfig {
         return factory;
     }
 
-    // RabbitTemplate에 메시지 변환기 설정
+    // RabbitTemplate에 메시지 변환기 및 Publisher Confirms 설정
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter());
+
+        // Exchange → Queue 라우팅 실패 시 콜백 (바인딩 깨짐, 큐 삭제 등)
+        rabbitTemplate.setMandatory(true);
+        rabbitTemplate.setReturnsCallback(returned -> {
+            log.error("메시지 라우팅 실패 - exchange: {}, routingKey: {}, replyText: {}",
+                    returned.getExchange(), returned.getRoutingKey(), returned.getReplyText());
+            slackNotificationService.sendNotification(
+                    "RabbitMQ 메시지 라우팅 실패 - routingKey: " + returned.getRoutingKey()
+                    + ", 사유: " + returned.getReplyText()
+            );
+        });
+
+        // Broker가 메시지를 받았는지 확인 (publish ACK/NACK)
+        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+            if (!ack) {
+                log.error("RabbitMQ publish NACK - cause: {}", cause);
+                slackNotificationService.sendNotification("RabbitMQ publish 실패(NACK) - " + cause);
+            }
+        });
+
         return rabbitTemplate;
     }
 
@@ -126,6 +146,8 @@ public class RabbitMQConfig {
         connectionFactory.setUsername("guest");
         connectionFactory.setPassword("guest");
         connectionFactory.setVirtualHost("/");
+        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
+        connectionFactory.setPublisherReturns(true);
         connectionFactory.addConnectionListener(new ConnectionListener() {
             @Override
             public void onCreate(com.rabbitmq.client.Connection connection) {

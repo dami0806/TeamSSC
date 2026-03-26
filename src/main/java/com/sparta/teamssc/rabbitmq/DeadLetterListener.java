@@ -46,6 +46,11 @@ public class DeadLetterListener {
     public void handleDeadLetter(Message message) {
         log.warn("DLQ 메시지 수신: {}", message);
         try {
+            if (messageRepository.existsByMessageId(message.getMessageId())) {
+                log.warn("DLQ: 이미 처리된 메시지 무시 - messageId: {}", message.getMessageId());
+                return;
+            }
+
             messageRepository.save(message);
 
             String destination = "/app/chat/" + message.getRoomType().name().toLowerCase() + "/" + message.getRoomId();

@@ -10,4 +10,5 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findByRoomIdAndRoomType(Long teamId, RoomType roomType);
     void deleteByCreateAtBefore(LocalDateTime dateTime);
+    boolean existsByMessageId(String messageId);
 }

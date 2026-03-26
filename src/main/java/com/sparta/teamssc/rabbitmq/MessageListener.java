@@ -27,6 +27,12 @@ public class MessageListener {
             throw new AmqpRejectAndDontRequeueException("메시지 content가 비어있습니다.");
         }
 
+        // 중복 메시지 확인 (Consumer 재처리 시 동일 messageId 재도달 방지)
+        if (messageRepository.existsByMessageId(message.getMessageId())) {
+            log.warn("이미 처리된 메시지 무시 - messageId: {}", message.getMessageId());
+            return;
+        }
+
         // 받은 메시지를 데이터베이스에 저장
         messageRepository.save(message);
 

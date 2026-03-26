@@ -4,6 +4,7 @@ import com.sparta.teamssc.domain.chat.entity.Message;
 import com.sparta.teamssc.domain.chat.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,13 @@ public class MessageListener {
     private final MessageRepository messageRepository;
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
-    @CircuitBreaker(name = CIRCUIT_BREAKER_NAME, fallbackMethod = "handleMessageFailure")
     public void handleMessage(Message message) {
         log.debug("받은 RabbitMQ 메시지: {}", message);
 
-        // 메시지 필드 검증
+        // 메시지 필드 검증: content가 없으면 DLQ로 이동
         if (message.getContent() == null || message.getContent().isEmpty()) {
-            log.error("널값인 메시지: {}", message);
-            return; // 메시지 처리를 중단
+            log.error("content가 비어있는 메시지 DLQ로 이동: {}", message);
+            throw new AmqpRejectAndDontRequeueException("메시지 content가 비어있습니다.");
         }
 
         // 받은 메시지를 데이터베이스에 저장

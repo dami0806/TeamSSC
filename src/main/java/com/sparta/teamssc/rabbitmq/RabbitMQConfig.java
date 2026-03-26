@@ -8,6 +8,7 @@ import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFacto
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionListener;
+import com.rabbitmq.client.BlockedListener;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -135,8 +136,36 @@ public class RabbitMQConfig {
         connectionFactory.setUsername("guest");
         connectionFactory.setPassword("guest");
         connectionFactory.setVirtualHost("/");
+        // TCP 연결 타임아웃 3초 - 연결 시도 중 무한 대기 방지
+        connectionFactory.setConnectionTimeout(3000);
+        // 채널 풀에서 채널 대기 타임아웃 3초 - 고부하 시 스레드 점유 방지
+        connectionFactory.setChannelCheckoutTimeout(3000);
         connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
         connectionFactory.setPublisherReturns(true);
+        // 메모리/디스크 경보로 Broker가 publish를 block할 때 감지
+        connectionFactory.addConnectionListener(new ConnectionListener() {
+            @Override
+            public void onCreate(com.rabbitmq.client.Connection connection) {
+                connection.addBlockedListener(new BlockedListener() {
+                    @Override
+                    public void handleBlocked(String reason) {
+                        log.warn("RabbitMQ 연결 Block됨 (메모리/디스크 경보): {}", reason);
+                        CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("rabbitmq-consumer");
+                        cb.transitionToOpenState();
+                        slackNotificationService.sendNotification("RabbitMQ 리소스 경보로 publish 차단 - " + reason);
+                    }
+
+                    @Override
+                    public void handleUnblocked() {
+                        log.info("RabbitMQ 연결 Unblock됨 - 정상 복구");
+                        CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("rabbitmq-consumer");
+                        if (cb.getState() == CircuitBreaker.State.OPEN) {
+                            cb.transitionToHalfOpenState();
+                        }
+                    }
+                });
+            }
+        });
         connectionFactory.addConnectionListener(new ConnectionListener() {
             @Override
             public void onCreate(com.rabbitmq.client.Connection connection) {

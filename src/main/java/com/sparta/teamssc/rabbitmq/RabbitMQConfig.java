@@ -1,19 +1,32 @@
 package com.sparta.teamssc.rabbitmq;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionListener;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
 @Configuration
+@RequiredArgsConstructor
 @Slf4j
 public class RabbitMQConfig {
+
+    private final CircuitBreakerRegistry circuitBreakerRegistry;
+    private final SlackNotificationService slackNotificationService;
+
+    @Value("${spring.rabbitmq.host:localhost}")
+    private String rabbitHost;
 
     // 일반 큐
     public static final String QUEUE_NAME = "chat-queue";
@@ -96,11 +109,36 @@ public class RabbitMQConfig {
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setHost("rabbitmq");
+        connectionFactory.setHost(rabbitHost);
         connectionFactory.setPort(5672);
         connectionFactory.setUsername("guest");
         connectionFactory.setPassword("guest");
         connectionFactory.setVirtualHost("/");
+        connectionFactory.addConnectionListener(new ConnectionListener() {
+            @Override
+            public void onCreate(com.rabbitmq.client.Connection connection) {
+                log.info("RabbitMQ 연결 성공");
+                CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("rabbitmq-consumer");
+                if (cb.getState() == CircuitBreaker.State.OPEN) {
+                    cb.transitionToHalfOpenState();
+                    log.info("RabbitMQ 재연결 감지 - CircuitBreaker HALF_OPEN 전환");
+                }
+            }
+
+            @Override
+            public void onClose(com.rabbitmq.client.ShutdownSignalException signal) {
+                log.error("RabbitMQ 연결 끊김: {}", signal.getMessage());
+                CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("rabbitmq-consumer");
+                cb.transitionToOpenState();
+                log.warn("CircuitBreaker OPEN 전환");
+                slackNotificationService.sendNotification("RabbitMQ Broker 연결 끊김 감지 - CircuitBreaker OPEN");
+            }
+        });
         return connectionFactory;
+    }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
     }
 }

@@ -5,6 +5,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.core.task.VirtualThreadTaskExecutor;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionListener;
@@ -91,12 +92,14 @@ public class RabbitMQConfig {
 
     // @RabbitListener 컨테이너 설정
     // defaultRequeueRejected=false: 예외 발생 시 requeue하지 않고 DLQ로 이동
+    // VirtualThreadTaskExecutor: 가상 스레드로 메시지 처리 (Java 21+)
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setDefaultRequeueRejected(false);
         factory.setMessageConverter(messageConverter());
+        factory.setTaskExecutor(new VirtualThreadTaskExecutor("rabbitmq-consumer-"));
         return factory;
     }
 

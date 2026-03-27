@@ -148,8 +148,8 @@ public class RabbitMQConfig {
         // 메모리/디스크 경보로 Broker가 publish를 block할 때 감지
         connectionFactory.addConnectionListener(new ConnectionListener() {
             @Override
-            public void onCreate(com.rabbitmq.client.Connection connection) {
-                connection.addBlockedListener(new BlockedListener() {
+            public void onCreate(org.springframework.amqp.rabbit.connection.Connection connection) {
+                connection.getDelegate().addBlockedListener(new BlockedListener() {
                     @Override
                     public void handleBlocked(String reason) {
                         log.warn("RabbitMQ 연결 Block됨 (메모리/디스크 경보): {}", reason);
@@ -171,7 +171,7 @@ public class RabbitMQConfig {
         });
         connectionFactory.addConnectionListener(new ConnectionListener() {
             @Override
-            public void onCreate(com.rabbitmq.client.Connection connection) {
+            public void onCreate(org.springframework.amqp.rabbit.connection.Connection connection) {
                 log.info("RabbitMQ 연결 성공");
                 CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("rabbitmq-consumer");
                 if (cb.getState() == CircuitBreaker.State.OPEN) {
@@ -181,7 +181,7 @@ public class RabbitMQConfig {
             }
 
             @Override
-            public void onClose(com.rabbitmq.client.ShutdownSignalException signal) {
+            public void onShutDown(com.rabbitmq.client.ShutdownSignalException signal) {
                 log.error("RabbitMQ 연결 끊김: {}", signal.getMessage());
                 CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("rabbitmq-consumer");
                 cb.transitionToOpenState();

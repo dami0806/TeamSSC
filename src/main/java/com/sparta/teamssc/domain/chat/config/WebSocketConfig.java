@@ -54,8 +54,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setVirtualHost("/")
                 .setSystemHeartbeatSendInterval(10000)
                 .setSystemHeartbeatReceiveInterval(10000)
-                .setTaskScheduler(stompRelayTaskScheduler())
-                .setReconnectDelay(5000);
+                .setTaskScheduler(stompRelayTaskScheduler());
         registry.setApplicationDestinationPrefixes("/app");
     }
 

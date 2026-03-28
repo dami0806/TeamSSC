@@ -53,7 +53,7 @@ public class DeadLetterListener {
 
             messageRepository.save(message);
 
-            String destination = "/app/chat/" + message.getRoomType().name().toLowerCase() + "/" + message.getRoomId();
+            String destination = "/topic/chat/" + message.getRoomType().name().toLowerCase() + "/" + message.getRoomId();
             messagingTemplate.convertAndSend(destination, message);
 
             log.info("DLQ 메시지 재처리 성공: {}", message);

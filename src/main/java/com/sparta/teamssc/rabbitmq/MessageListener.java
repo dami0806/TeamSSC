@@ -37,8 +37,7 @@ public class MessageListener {
         messageRepository.save(message);
 
         // 받은 메시지를 WebSocket으로 전송
-       // String destination = "/topic/chat." + message.getRoomType().name().toLowerCase() + "." + message.getRoomId();
-        String destination = "/app/chat/" + message.getRoomType().name().toLowerCase() + "/" + message.getRoomId();
+        String destination = "/topic/chat/" + message.getRoomType().name().toLowerCase() + "/" + message.getRoomId();
         log.debug("보낸 WebSocket 도착지: {}", destination);
 
         messagingTemplate.convertAndSend(destination, message);

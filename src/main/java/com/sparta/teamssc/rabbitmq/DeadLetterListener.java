@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -24,8 +25,10 @@ public class DeadLetterListener {
     private final MessageRepository messageRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final RabbitTemplate rabbitTemplate;
+    private final ErrorMessageRepository errorMessageRepository;
 
     private static final int QUEUE_THRESHOLD = 500;
+    private static final int MAX_RETRY = 3;
 
     @Value("${spring.rabbitmq.host:localhost}")
     private String rabbitHost;
@@ -39,32 +42,56 @@ public class DeadLetterListener {
     private final RestTemplate restTemplate = new RestTemplate();
 
     /**
-     * DLQ 메시지 수신 후 재처리 시도.
-     * DB 저장 및 WebSocket 전송 재시도 후 실패 시 Slack 알림.
+     * DLQ 메시지 수신 후 최대 3회 재처리 시도.
+     * 모두 실패 시 error_messages 테이블에 영구 보존 후 ACK 전송
+     * (NACK → 무한 루프 / ACK → 영구 유실 문제를 테이블 저장으로 해결)
      */
     @RabbitListener(queues = RabbitMQConfig.DEAD_LETTER_QUEUE)
     public void handleDeadLetter(Message message) {
         log.warn("DLQ 메시지 수신: {}", message);
-        try {
-            if (messageRepository.existsByMessageId(message.getMessageId())) {
-                log.warn("DLQ: 이미 처리된 메시지 무시 - messageId: {}", message.getMessageId());
-                return;
-            }
 
-            messageRepository.save(message);
-
-            String destination = "/topic/chat/" + message.getRoomType().name().toLowerCase() + "/" + message.getRoomId();
-            messagingTemplate.convertAndSend(destination, message);
-
-            log.info("DLQ 메시지 재처리 성공: {}", message);
-        } catch (Exception e) {
-            log.error("DLQ 메시지 재처리 실패, Slack 알림 전송: {}", message, e);
-            slackNotificationService.sendNotification(
-                    "DLQ 메시지 재처리 실패 - roomType: " + message.getRoomType()
-                            + ", roomId: " + message.getRoomId()
-                            + ", sender: " + message.getSender()
-            );
+        if (messageRepository.existsByMessageId(message.getMessageId())) {
+            log.warn("DLQ: 이미 처리된 메시지 무시 - messageId: {}", message.getMessageId());
+            return;
         }
+
+        Exception lastException = null;
+        for (int attempt = 1; attempt <= MAX_RETRY; attempt++) {
+            try {
+                messageRepository.save(message);
+
+                String destination = "/topic/chat/" + message.getRoomType().name().toLowerCase() + "/" + message.getRoomId();
+                messagingTemplate.convertAndSend(destination, message);
+
+                log.info("DLQ 메시지 재처리 성공 ({}회 시도): messageId={}", attempt, message.getMessageId());
+                return;
+            } catch (Exception e) {
+                lastException = e;
+                log.warn("DLQ 재처리 실패 ({}/{}회) - messageId={}, cause={}",
+                        attempt, MAX_RETRY, message.getMessageId(), e.getMessage());
+            }
+        }
+
+        // 3회 모두 실패 → error_messages 저장 후 ACK (유실 없이 무한 루프도 방지)
+        String failureReason = lastException != null ? lastException.getMessage() : "알 수 없는 오류";
+        errorMessageRepository.save(ErrorMessage.builder()
+                .messageId(message.getMessageId())
+                .content(message.getContent())
+                .sender(message.getSender())
+                .roomId(message.getRoomId())
+                .roomType(message.getRoomType())
+                .failedAt(LocalDateTime.now())
+                .failureReason(failureReason)
+                .build());
+
+        log.error("DLQ {}회 재시도 최종 실패 - error_messages 저장 완료: messageId={}", MAX_RETRY, message.getMessageId());
+        slackNotificationService.sendNotification(
+                "DLQ " + MAX_RETRY + "회 재처리 최종 실패 - messageId: " + message.getMessageId()
+                + ", sender: " + message.getSender()
+                + ", roomType: " + message.getRoomType()
+                + ", roomId: " + message.getRoomId()
+                + ", 사유: " + failureReason
+        );
     }
 
     @Scheduled(fixedRate = 60000)

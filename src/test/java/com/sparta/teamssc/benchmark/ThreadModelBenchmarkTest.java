@@ -3,10 +3,12 @@ package com.sparta.teamssc.benchmark;
 import com.sparta.teamssc.domain.chat.entity.Message;
 import com.sparta.teamssc.domain.chat.entity.RoomType;
 import com.sparta.teamssc.domain.chat.repository.MessageRepository;
+import com.sparta.teamssc.common.config.QueryDSLConfig;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("local")
+@Import(QueryDSLConfig.class)
 @TestPropertySource(properties = {
         "spring.datasource.hikari.maximum-pool-size=10",
         "spring.datasource.hikari.minimum-idle=10",

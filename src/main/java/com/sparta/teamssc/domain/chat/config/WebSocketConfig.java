@@ -36,7 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public ThreadPoolTaskScheduler stompRelayTaskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setPoolSize(1);
-        scheduler.setThreadNamePrefix("stomp-relay-");
+        scheduler.setThreadFactory(Thread.ofVirtual().name("stomp-relay-", 0).factory());
         scheduler.initialize();
         return scheduler;
     }

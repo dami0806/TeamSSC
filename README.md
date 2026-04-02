@@ -1,14 +1,35 @@
 # TreamSSC (Tream Study Student Care) 프로젝트
 ![image](https://github.com/user-attachments/assets/448542c3-bab2-4ac1-b5f8-3624d10688ed)
 
-
 ## 📌 프로젝트 개요
 
 - **프로젝트 기간**: 2024.07.17 ~ 2024.08.20
 - **프로젝트 설명**:
   - Slack, Notion, Excel 등을 통한 복잡한 자료 제공 경로를 단순화하고, **공지 및 소통을 간편하게 관리하는 웹 애플리케이션** 개발
-  - 실시간 채팅 및 공지 시스템을 통해 사용자 간 원활한 소통을 지원
+  - 실시간 채팅 및 공지 시스템을 통해 사용자 간 원활한 소통을 지원하는 서비스입니다.
 
+## 시스템 아키텍처
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/162ce9c5-972c-453e-ba0d-59a3f4f90135" />
+
+## 👥 팀 역할
+
+| 역할 | 이름 | 담당 기능 |
+|------|------|----------------|
+| 리더 | 함승완 | 회원관련 기능, 프론트엔드 세팅 |
+| 부리더 | 박다미 | 시큐리티 설정, 팀 프로젝트 관리, 채팅, 배포 |
+| 팀원 | 박강현 | 게시글, 공지사항, 배포, 프론트엔드 |
+| 팀원 | 김창민 | 트랙, 카카오 로그인 |
+| 팀원 | 김현민 | 기수, 회원가입 승인, 이메일 인증 |
+
+
+## 🚀 주요 기여
+
+- **WebSocket 기반 실시간 채팅 기능 구현**
+- **JWT 인증 및 사용자 관리 시스템 개발**
+- **RabbitMQ 비동기 메시징 처리 구현**
+- **Docker 및 AWS EC2를 활용한 배포 경험**
+- **Jira를 활용한 프로젝트 플래닝 및 GitHub 이슈 관리**
+- 
 ## 백엔드  
 <div align=left>
     <img src="https://img.shields.io/badge/JDK%2021-E38836?style=flat-square&logo=openJdk&logoColor=white" style="margin-right: 2px;">
@@ -76,25 +97,6 @@
     <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white">
 </p>
 
-
-## 👥 팀 역할
-
-| 역할 | 이름 | 담당 기능 |
-|------|------|----------------|
-| 리더 | 함승완 | 회원관련 기능, 프론트엔드 세팅 |
-| 부리더 | 박다미 | 시큐리티 설정, 팀 프로젝트 관리, 채팅, 배포 |
-| 팀원 | 박강현 | 게시글, 공지사항, 배포, 프론트엔드 |
-| 팀원 | 김창민 | 트랙, 카카오 로그인 |
-| 팀원 | 김현민 | 기수, 회원가입 승인, 이메일 인증 |
-
-
-## 🚀 주요 기여
-
-- **WebSocket 기반 실시간 채팅 기능 구현**
-- **JWT 인증 및 사용자 관리 시스템 개발**
-- **RabbitMQ 비동기 메시징 처리 구현**
-- **Docker 및 AWS EC2를 활용한 배포 경험**
-- **Jira를 활용한 프로젝트 플래닝 및 GitHub 이슈 관리**
 
 ## 🛠 트러블슈팅
 
